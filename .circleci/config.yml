@@ -255,7 +255,7 @@ jobs:
             cd backend
             if grep -q "has been executed successfully." migration_output.txt
             then
-              curl https://kvdb.io/9GE4jRtKznmVKRfvdBABBe/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl https://kvdb.io/3TFJkVvMrT479qyp4zk1mM/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
               # touch ~/project/.circleci/outputs/db_migration_success
             fi
       - persist_to_workspace:

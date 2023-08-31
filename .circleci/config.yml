@@ -263,8 +263,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/outputs/
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID}"     
+      - destroy-environment
+               
 
 #   deploy-frontend:
 #     docker:

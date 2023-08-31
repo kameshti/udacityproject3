@@ -295,13 +295,13 @@ jobs:
       #     name: Copy frontend to s3 bucket.
       #     command: |
       #       cd ~/project/frontend
-      #       aws s3 cp dist s3://udapeople-prod-${CIRCLE_WORKFLOW_ID} --recursive
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/frontend/dist
-      - destroy-environment
-      - revert-migrations      
+      #       aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID} --recursive
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - project/frontend/dist
+      # - destroy-environment
+      # - revert-migrations      
                     
   # deploy-backend:
   #   docker:

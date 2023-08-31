@@ -8,7 +8,7 @@ commands:
     steps:
       - slack/notify:
           event: fail
-          channel: cicd-pineline
+          channel: udacity
           template: basic_fail_1
   notify_slack_pass:
     steps:
@@ -101,7 +101,7 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
       - notify_status_on_fail
-      - notify_slack_pass
+      
 
   test-frontend:
       docker:

@@ -262,8 +262,8 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/output/
-      - destroy-environment
+            - project/.circleci/output/output.txt
+      # - destroy-environment
                
 
 #   deploy-frontend:

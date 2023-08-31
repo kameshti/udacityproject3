@@ -10,6 +10,11 @@ commands:
           event: fail
           channel: cicd-pineline
           template: basic_fail_1
+  notify_slack_pass:
+    steps:
+      - slack/notify:
+          event: pass
+          template: basic_success_1
 
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -96,6 +101,7 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
       - notify_status_on_fail
+      - notify_slack_pass
 
   test-frontend:
       docker:
@@ -355,9 +361,9 @@ workflows:
           requires: [build-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [test-feature-branch]
+          # filters:
+          #   branches:
+          #     only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       # - run-migrations:

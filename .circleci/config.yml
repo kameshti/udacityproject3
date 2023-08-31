@@ -364,22 +364,15 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            # # curl -s $API_URL/api/status
-            # # cat $API_URL/api/status
-            # if curl -s $API_URL/api/status
-            # then
-            # return 1
-            # else
-            # return 0
-            # fi
+            
             export API_URL="http://${BACKEND_IP}:3030"
-          echo "${API_URL}"
-          if curl "${API_URL}/api/status" | grep "ok"
-          then
-            return 0
-          else
-            return 1
-          fi
+            echo "${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+              return 0
+            else
+              return 1
+            fi
       - run:
           name: Frontend smoke test.
           command: |

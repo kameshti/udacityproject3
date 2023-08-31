@@ -26,7 +26,7 @@ commands:
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.WorkflowID >>
             aws s3 rm s3://udapeople-<< parameters.WorkflowID >> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.WorkflowID >>
-    install_ansible:
+  install_ansible:
     description: Install ansible
     steps:
       - run:

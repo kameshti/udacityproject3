@@ -15,15 +15,7 @@ commands:
       - slack/notify:
           event: pass
           template: basic_success_1
-  install_awscli:
-    description: Install aws cli
-    steps:
-      - run:
-          name: Install aws cli
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli.zip"
-            unzip awscli.zip
-            sudo ./aws/install
+
 
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -347,39 +339,53 @@ jobs:
       - revert-migrations 
 
   smoke-test:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - install_awscli
-      - run:
-          name: Backend smoke test.
-          command: |
-            export BACKEND_IP=$(aws ec2 describe-instances \
-                --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-                --output text)
-            echo "back end ip ${BACKEND_IP}"
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}" >> frontend/.env
-            echo "${API_URL}"
-            if curl -s ${API_URL}/api/status | grep "ok"
-            then
-              exit 0
-            else
-              exit 1
-            fi
-      - run:
-          name: Frontend smoke test.
-          command: |
-            if curl -s http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com | grep "Welcome"
-            then
-              exit 0
-            else
-              exit 1
-            fi
-      - destroy-environment
-      - revert-migrations 
+        docker:
+            - image: node:13.8-buster
+        steps:
+            - checkout
+            - run:
+                name: Update packages
+                command: |
+                    apt update
+            - run:
+                name: Install dependencies (Curl)
+                command: |
+                    apt-get -y install curl
+            - run:
+                name: Install dependencies (AWS-Cli)
+                command: |
+                    apt-get -y install awscli
+            - run:
+                name: Backend smoke test.
+                command: |
+                    BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
+                    echo "Backend-ip: ${BACKEND_IP}"
+                    API_URL="http://${BACKEND_IP}:3030"
+                    echo "API URL: ${API_URL}"
+
+                    # your code here
+                    # Fetch and prepare the BACKEND_IP env var
+                    if curl "${API_URL}/api/status" | grep "ok"
+                    then
+                        exit 0
+                    else
+                        exit 1
+                    fi
+            - run:
+                name: Frontend smoke test.
+                command: |
+                    # your code here
+                    sleep 60
+                    URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
+                    echo ${URL} 
+                    if curl -s ${URL} | grep "Welcome"
+                    then
+                        exit 0
+                    else
+                        exit 1
+                    fi
+            - destroy-environment
+            - revert-migrations
 
 
 #   cloudfront-update:

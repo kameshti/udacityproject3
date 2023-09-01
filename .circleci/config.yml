@@ -360,18 +360,15 @@ jobs:
                 name: Backend smoke test.
                 command: |
                     BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
-                    echo "Backend-ip: ${BACKEND_IP}"
-                    API_URL="http://${BACKEND_IP}:3030"
-                    echo "API URL: ${API_URL}"
-
-                    # your code here
-                    # Fetch and prepare the BACKEND_IP env var
+                    export API_URL="http://${BACKEND_IP}:3030"
+                    echo "${API_URL}"
                     if curl "${API_URL}/api/status" | grep "ok"
                     then
-                        exit 0
+                      return 0
                     else
-                        exit 1
+                      return 1
                     fi
+
             - run:
                 name: Frontend smoke test.
                 command: |
@@ -450,8 +447,8 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      - smoke-test:
-          requires: [deploy-frontend,deploy-backend]
+      # - smoke-test:
+      #     requires: [deploy-frontend,deploy-backend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:

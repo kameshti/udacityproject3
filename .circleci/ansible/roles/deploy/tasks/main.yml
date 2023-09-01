@@ -1,33 +1,71 @@
+# ---
+# - name: "Creates backend app directory"
+#   file:
+#     path: ~/backend-application
+#     state: directory
+
+# - name: "Unarchive backend files"
+#   unarchive:
+#     src: ~/project/artifact.tar.gz
+#     dest: ~/backend-application
+# - name: "upgrade packages."
+#   become: true
+#   apt:
+#     upgrade: "yes"
+# - name: "upgrade packages."
+#   become: true
+#   apt:
+#     upgrade: "yes"
+# - name: "install dependencies."
+#   become: true
+#   apt:
+#     name: ["nodejs", "npm"]
+#     update_cache: yes
+# - name: "install pm2"
+#   become: true
+#   npm:
+#     name: pm2
+#     global: yes
+#     production: yes
+#     state: present
+
+
 ---
-- name: "Creates backend app directory"
-  file:
-    path: ~/backend-application
+- name: create directory 
+  become: true
+  file: 
+    path: /home/ubuntu/web
     state: directory
-
-- name: "Unarchive backend files"
-  unarchive:
+    mode: 0755
+- name: copy artifact
+  become: true
+  copy: 
     src: ~/project/artifact.tar.gz
-    dest: ~/backend-application
-- name: "upgrade packages."
-  become: true
-  apt:
-    upgrade: "yes"
-- name: "upgrade packages."
-  become: true
-  apt:
-    upgrade: "yes"
-- name: "install dependencies."
-  become: true
-  apt:
-    name: ["nodejs", "npm"]
-    update_cache: yes
-- name: "install pm2"
-  become: true
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
+    dest: /home/ubuntu/web/artifact.tar.gz
 
+# - name: "Copy backend build folder to EC2"
+#   become: yes
+#   unarchive:
+#     src: /root/project/artifact.tar.gz
+#     dest: /home/ubuntu/app/
+#     owner: ubuntu
 
-  
+- name: "NPM Install"
+  become: yes
+  shell: |
+    sudo apt update
+    sudo apt-get install -y npm
+    cd /home/ubuntu/app
+
+- name: Stop and delete already running server
+  ignore_errors: yes
+  shell: |
+    pm2 stop backend
+    pm2 delete backend
+
+- name: "Start backend"
+  become: yes
+  shell: |
+    cd /home/ubuntu/app
+    # npm run start
+    pm2 start npm -- start

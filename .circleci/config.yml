@@ -329,9 +329,7 @@ jobs:
             mv backend.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
 
       - run:
-          name: Deploy backend Setup EC2 instance & copy compiled backend to the EC2 instance
-          command: |
-             run:
+          
           name: Deploy backend Setup EC2 instance & copy compiled backend to the EC2 instance
           command: |
             cd .circleci/ansible

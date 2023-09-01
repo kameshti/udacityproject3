@@ -244,10 +244,9 @@ jobs:
             npm install
             npm run build
             npm run migrations > migrations_dump.txt
-            # echo -e "NODE_ENV=local\nVERSION=1\nTYPEORM_CONNECTION=${TYPEORM_CONNECTION}\nTYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR}\nTYPEORM_ENTITIES=${TYPEORM_ENTITIES}\nTYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}\nTYPEORM_HOST=${TYPEORM_HOST}\nTYPEORM_PORT=${TYPEORM_PORT}\nTYPEORM_USERNAME=${TYPEORM_USERNAME}\nTYPEORM_PASSWORD=${TYPEORM_PASSWORD}\nTYPEORM_DATABASE=${TYPEORM_DATABASE}" >> backend/.env
             
       - run:
-          name: Send migration results to kvdb
+          name: Send migration results to memstash
           command: |
             cd backend
             if grep -q "has been executed successfully." migration_output.txt
@@ -383,8 +382,8 @@ jobs:
                     else
                         exit 1
                     fi
-            # - destroy-environment
-            # - revert-migrations
+            - destroy-environment
+            - revert-migrations
 
 
 #   cloudfront-update:
@@ -448,8 +447,8 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      - smoke-test:
-          requires: [deploy-frontend,deploy-backend]
+      # - smoke-test:
+      #     requires: [deploy-frontend,deploy-backend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:

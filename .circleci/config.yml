@@ -314,14 +314,14 @@ jobs:
           command: |
             apk add --update tar gzip ansible nodejs npm curl jq
             pip install awscli
-      - run:
-          name: Set up inventory file
-          command: |
-            cd .circleci/ansible
-            echo "[web]" >> inventory.txt
-            URLS=$(curl -H "token: 4034357b-6ac3-46b0-bdbf-84a96db25691" --request GET https://api.memstash.io/values/url_${CIRCLE_WORKFLOW_ID})
-            echo "$URLS" >> inventory.txt
-            cat inventory.txt
+      # - run:
+      #     name: Set up inventory file
+      #     command: |
+      #       cd .circleci/ansible
+      #       echo "[web]" >> inventory.txt
+      #       # URLS=$(curl -H "token: 4034357b-6ac3-46b0-bdbf-84a96db25691" --request GET https://api.memstash.io/values/url_${CIRCLE_WORKFLOW_ID})
+      #       echo "$URLS" >> inventory.txt
+      #       cat inventory.txt
       - run:
           name: Build and deploy backend (remove node modules)
           no_output_timeout: 30m

@@ -382,8 +382,8 @@ jobs:
                     else
                         exit 1
                     fi
-            - destroy-environment
-            - revert-migrations
+            # - destroy-environment
+            # - revert-migrations
 
 
 #   cloudfront-update:
@@ -447,8 +447,8 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-frontend,deploy-backend]
+      - smoke-test:
+          requires: [deploy-frontend,deploy-backend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:

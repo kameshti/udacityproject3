@@ -298,30 +298,44 @@ jobs:
       # - destroy-environment
       # - revert-migrations      
                     
-  - run: 
-          name: Install independencies
-          command: |
-            apk add --update ansible tar npm curl
-            apk add --no-cache aws-cli
+  deploy-backend:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - add_ssh_keys:
+          fingerprints: ["bc:99:70:2d:db:4d:b9:18:a8:ae:7d:89:92:d7:b0:9f"]
       - attach_workspace:
-          at: .        
+          at: ~/
+      - run: 
+          name: Install dependencies
+          command: |
+            apk add --update curl nodejs npm
+            apk add --update ansible zip
+            apk add --update openssh-client tar gzip
+            pip install awscli
+
       - run:
-          name: Deploy Backend
+          name: Build backend app
           command: |
             cd backend
             npm i
             npm run build
-              # npm audit fix --force
             cd ..
-              # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
+
+      - run:
+          
+          name: Deploy backend Setup EC2 instance 
+          command: |
             cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
-      - revert-migrations
-
+      - revert-migrations 
 
 
 
@@ -437,7 +451,7 @@ workflows:
       - deploy-backend:
           requires: [run-migrations]
       - smoke-test:
-          requires: [deploy-frontend]
+          requires: [deploy-frontend,deploy-backend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:

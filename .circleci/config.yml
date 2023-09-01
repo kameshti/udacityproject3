@@ -303,40 +303,56 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-build]
+      # - restore_cache:
+      #     keys: [backend-build]
       - add_ssh_keys:
           fingerprints: ["bc:99:70:2d:db:4d:b9:18:a8:ae:7d:89:92:d7:b0:9f"]
       - attach_workspace:
           at: ~/
-      - run: 
+      - - run:
           name: Install dependencies
           command: |
-            apk add --update curl nodejs npm
-            apk add --update ansible zip
-            apk add --update openssh-client tar gzip
+            apk add --update tar gzip ansible nodejs npm curl jq
             pip install awscli
-
       - run:
-          name: Install dependencies
+          name: Set up inventory file
           command: |
-            apk add --update ansible curl rsync openssh nodejs npm
-            ansible --version
-            pip install awscli
-            aws --version
-      # - run:
-      #     name: compress backend
-      #     command: |
-      #       tar -C ~/project/backend -czvf artifact.tar.gz
-      - run:
-          name: Deploy backend
-          command: |
-            cd ~/project/.circleci/ansible
+            cd .circleci/ansible
+            echo "[web]" >> inventory.txt
+            URLS=$(curl -H "token: 4034357b-6ac3-46b0-bdbf-84a96db25691" --request GET https://api.memstash.io/values/url_${CIRCLE_WORKFLOW_ID})
+            echo "$URLS" >> inventory.txt
             cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml
-      # Here's where you will add some code to rollback on failure
+      - run:
+          name: Build and deploy backend (remove node modules)
+          no_output_timeout: 30m
+          command: |
+            cd backend
+            touch .env
+            echo ENVIROMENT=production > ".env"
+            echo TYPEORM_CONNECTION=postgres >> ".env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> ".env"
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> ".env"
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> ".env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> ".env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> ".env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ".env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ".env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
+
+            npm i
+            npm run build
+            npm run prestart:prod
+
+            rm -rf node_modules 
+            rm -rf dist
+            rm -rf test
+            rm README.md 
+
+            mkdir -p ../.circleci/ansible/roles/deploy/files
+            cd ../.circleci/ansible
+            ansible-playbook -i inventory.txt deploy.yml
       - destroy-environment
-      - revert-migrations
+      - revert-migration
 
       # - run:
       #     name: Deploy backend Setup EC2 instance & copy compiled backend to the EC2 instance

@@ -312,7 +312,7 @@ jobs:
             npm i
             npm run build
               # npm audit fix --force
-            
+            cd ..
               # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible

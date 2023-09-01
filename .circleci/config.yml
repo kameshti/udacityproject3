@@ -348,9 +348,9 @@ jobs:
             rm -rf test
             rm README.md 
 
-            mkdir -p ../.circleci/ansible/roles/deploy/files
+            
             cd ../.circleci/ansible
-            ansible-playbook -i inventory.txt deploy.yml
+            ansible-playbook -i inventory.txt deploy-backend.yml
       # - destroy-environment
       # - revert-migration
 

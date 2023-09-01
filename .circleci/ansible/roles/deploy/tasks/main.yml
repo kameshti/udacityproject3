@@ -42,13 +42,10 @@
   copy: 
     src: ~/project/artifact.tar.gz
     dest: /home/ubuntu/web/artifact.tar.gz
-
-# - name: "Copy backend build folder to EC2"
-#   become: yes
-#   unarchive:
-#     src: /root/project/artifact.tar.gz
-#     dest: /home/ubuntu/app/
-#     owner: ubuntu
+- name: "upgrade packages."
+  become: true
+  apt:
+    upgrade: "yes"
 
 - name: "NPM Install"
   become: yes

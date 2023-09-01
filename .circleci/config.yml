@@ -351,8 +351,8 @@ jobs:
             mkdir -p ../.circleci/ansible/roles/deploy/files
             cd ../.circleci/ansible
             ansible-playbook -i inventory.txt deploy.yml
-      - destroy-environment
-      - revert-migration
+      # - destroy-environment
+      # - revert-migration
 
       # - run:
       #     name: Deploy backend Setup EC2 instance & copy compiled backend to the EC2 instance

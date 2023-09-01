@@ -326,7 +326,7 @@ jobs:
             cd backend/ && tar -zcvf ../backend.tar.gz . && cd - 
 
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            mv backend.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
+            cp backend.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
 
       - run:
           

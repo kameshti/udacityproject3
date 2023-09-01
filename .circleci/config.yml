@@ -300,30 +300,37 @@ jobs:
                     
   deploy-backend:
     docker:
-      # Docker image here that supports Ansible
       - image: python:3.7-alpine3.11
     steps:
-      # Checkout code from git
       - checkout
-      # Add ssh keys with fingerprint
+      - restore_cache:
+          keys: [backend-build]
       - add_ssh_keys:
           fingerprints: ["bc:99:70:2d:db:4d:b9:18:a8:ae:7d:89:92:d7:b0:9f"]
-      # attach workspace
       - attach_workspace:
           at: ~/
-      - run:
+      - run: 
           name: Install dependencies
           command: |
             apk add --update ansible curl rsync openssh nodejs npm
             ansible --version
             pip install awscli
-            aws --version
-      # - run:
-      #     name: compress backend
-      #     command: |
-      #       tar -C ~/project/backend -czvf artifact.tar.gz
+            
+
       - run:
-          name: Deploy backend
+          name: Build backend app
+          command: |
+            cd ~/project/backend
+            ls
+            cd ../
+            cd backend/ && tar -zcvf ../backend.tar.gz . && cd - 
+
+            mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
+            mv backend.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
+
+      - run:
+          
+          name: Deploy backend Setup EC2 instance & copy compiled backend to the EC2 instance
           command: |
             cd ~/project/.circleci/ansible
             cat inventory.txt

@@ -75,10 +75,6 @@
   command: echo $TYPEORM_ENTITIES
   register: typeorm_entities_output 
 
-- name: display TYPEORM_ENTITIES environment variable
-  debug:
-    var: typeorm_entities_output.stdout
-
 
 
 

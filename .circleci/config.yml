@@ -356,18 +356,18 @@ jobs:
                 name: Install dependencies (AWS-Cli)
                 command: |
                     apt-get -y install awscli
-            # - run:
-            #     name: Backend smoke test.
-            #     command: |
-            #         BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
-            #         export API_URL="http://${BACKEND_IP}:3030"
-            #         echo "${API_URL}"
-            #         if curl "${API_URL}/api/status" | grep "ok"
-            #         then
-            #           return 0
-            #         else
-            #           return 1
-            #         fi
+            - run:
+                name: Backend smoke test.
+                command: |
+                    BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
+                    export API_URL="http://${BACKEND_IP}:3030"
+                    echo "${API_URL}"
+                    if curl "${API_URL}/api/status" | grep "ok"
+                    then
+                      return 0
+                    else
+                      return 1
+                    fi
 
             - run:
                 name: Frontend smoke test.
@@ -382,8 +382,8 @@ jobs:
                     else
                         exit 1
                     fi
-            - destroy-environment
-            - revert-migrations
+            # - destroy-environment
+            # - revert-migrations
 
 
 #   cloudfront-update:

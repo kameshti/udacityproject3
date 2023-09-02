@@ -409,7 +409,7 @@ jobs:
                 --no-paginate --output text
                 )
               echo "Old workflow id: ${OLD_WORKFLOW_ID}"
-              //curl https://kvdb.io/3TFJkVvMrT479qyp4zk1mM/old_workflow_id  -d "${OLD_WORKFLOW_ID}"
+              # curl https://kvdb.io/3TFJkVvMrT479qyp4zk1mM/old_workflow_id  -d "${OLD_WORKFLOW_ID}"
         
         - run:
             name: Update cloudfront distribution

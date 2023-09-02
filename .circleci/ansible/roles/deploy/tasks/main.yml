@@ -67,6 +67,17 @@
     pm2 stop default
     pm2 start npm -- run "start:dev"
   register: execute_node
+- name: "Debug backend"
+  shell: |
+    env > /home/ubuntu/envvars
+- name: check TYPEORM_ENTITIES environment variable
+  become: true
+  command: echo $TYPEORM_ENTITIES
+  register: typeorm_entities_output 
+
+- name: display TYPEORM_ENTITIES environment variable
+  debug:
+    var: typeorm_entities_output.stdout
 
 
 

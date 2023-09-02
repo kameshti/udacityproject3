@@ -398,7 +398,10 @@ cloudfront-update:
       - run:
           name: Save old workflow
           command: |
-            export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name=='WorkflowID'].Value" --no-paginate --output text)
+            export OLD_WORKFLOW_ID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text
+              )
             echo "Old workflow id: ${OLD_WORKFLOW_ID}"
             curl https://kvdb.io/3TFJkVvMrT479qyp4zk1mM/old_workflow_id  -d "${OLD_WORKFLOW_ID}"
 			

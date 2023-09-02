@@ -392,9 +392,15 @@ jobs:
 
   cloudfront-update:
       docker:
-        - image: circleci/node:13.8.0
+        - image: amazon/aws-cli
       steps:
         - checkout
+        - run:
+            name: Install dependencies
+            command: |
+              curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
+              yum -y install nodejs
+              yum -y install tar gzip
         - run:
             name: Save old workflow
             command: |

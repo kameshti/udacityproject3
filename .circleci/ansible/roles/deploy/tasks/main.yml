@@ -30,9 +30,10 @@
   become: true
   shell: |
     cd /home/ubuntu/web/
+    npm update
     npm install
     npm run build
-    rpm run start
+    npm run start
 - name: "install pm2"
   become: true
   npm:

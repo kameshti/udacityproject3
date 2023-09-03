@@ -32,6 +32,7 @@
     cd /home/ubuntu/web/
     npm install
     npm run build
+    rpm run start
 - name: "install pm2"
   become: true
   npm:

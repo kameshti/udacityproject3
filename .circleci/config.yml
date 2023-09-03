@@ -310,6 +310,16 @@ jobs:
             apk add --update ansible zip
             apk add --update openssh-client tar gzip
             pip install awscli
+            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            cat backend/.env
 
       - run:
           name: Build backend app
@@ -393,8 +403,13 @@ jobs:
   cloudfront-update:
       docker:
         - image: amazon/aws-cli
+        
       steps:
         - checkout
+        - run: 
+            name: Install dependencies
+            command: |
+              yum -y install tar gzip curl
         - run:
             name: Save old workflow
             command: |
